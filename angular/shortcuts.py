@@ -13,6 +13,9 @@ class AngularContextValue(object):
     def __getattr__(self, name):
         return AngularContextValue(getattr(self._original, name))
 
+    def __getitem__(self, name):
+        return AngularContextValue(self._original[name])
+
     def __unicode__(self):
         return u""
 

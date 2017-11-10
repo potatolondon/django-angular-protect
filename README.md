@@ -1,5 +1,5 @@
 
-*This is a work in progress and not suitable for production (or any other) use*
+**This is a work in progress and not suitable for production (or any other) use**
 
 # Django-Angular-Protect
 

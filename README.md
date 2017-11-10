@@ -8,7 +8,7 @@ both Angular's client-side templates alongside Django's server-side template sys
 
 ## High-level Overview
 
-This app provides a new function (`angular.shortcuts.ng_render()`) for rendering Django
+This app provides a new function (`angular.shortcuts.render()`) for rendering Django
 templates. If you use this function to render a template then all Django template variable
 substitutions are disabled by default.
 

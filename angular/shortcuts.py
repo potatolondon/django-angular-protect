@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render as django_render
 
 
 class AngularContextValue(object):
@@ -48,7 +48,7 @@ class AngularSafeContext(object):
             return self._original[key]
 
 
-def ng_render(request, template_name, context=None, **kwargs):
+def render(request, template_name, context=None, **kwargs):
     """
         Calls through to django.shortcuts.render but wraps the passed context
         in an AngularSafeContext object which by default will not allow access
@@ -56,7 +56,7 @@ def ng_render(request, template_name, context=None, **kwargs):
         will ensure ng-non-bindable has been applied).
     """
 
-    response = render(
+    response = django_render(
         request,
         template_name,
         AngularSafeContext(context)

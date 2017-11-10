@@ -12,10 +12,10 @@ class EnsureAngularProtectionMiddleware(object):
         If settings.DEBUG is True, this middleware detects whether returned HTML content
         contains the ng-app directive.
 
-        If it does, and the response wasn't rendered with angular.shortcuts.ng_render()
+        If it does, and the response wasn't rendered with `angular.shortcuts.render()`
         a SuspiciousOperation error is thrown.
 
-        This exists to prevent accidental bypass of the protection that ng_render provides.
+        This exists to prevent accidental bypass of the protection that `render()` provides.
     """
 
     def process_response(request, response):
@@ -26,7 +26,7 @@ class EnsureAngularProtectionMiddleware(object):
             if content.find(_NG_APP_MARKER) != -1:
                 if not getattr(response, _NG_SAFE_ATTRIBUTE, False):
                     raise SuspiciousOperation(
-                        "Angular template not rendered with ng_render"
+                        "Angular template not rendered with angular.shorcuts.render"
                     )
             return content
 

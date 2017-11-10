@@ -1,7 +1,7 @@
 
 **This is a work in progress and not suitable for production (or any other) use**
 
-# Django-Angular-Protect
+# Django Angular Protect
 
 This is a Django app which helps protect against potential XSS issues when using
 both Angular's client-side templates alongside Django's server-side template system.
@@ -14,20 +14,20 @@ substitutions are disabled by default.
 
 For example this template:
 
-```
+```html
 <span>{{user.first_name}}</span>
 ```
 
 Would output the following when using `ng_render()`
 
-```
+```html
 <span></span>
 ```
 
 That's not that useful when taken on its own. But it's safe for Angular. To get access to Django
 variables you must now be explicit:
 
-```
+```html
 {% djangoblock %}
 <span>{{user.first_name}}</span>
 {% enddjangoblock %}
@@ -36,7 +36,7 @@ variables you must now be explicit:
 
 This will output the following:
 
-```
+```html
 <div ng-non-bindable>
 <span>{{user.first_name}}</span>
 </div>
@@ -52,7 +52,7 @@ There are occasions though where you need to use data from the Django context wh
 In that situation, you can use the `mark_ng_safe` template filter while outside a
 `{% djangoblock %}`:
 
-```
+```html
 <div ng-if="{{safe_var|mark_ng_safe}}">
 ```
 

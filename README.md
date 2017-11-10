@@ -1,4 +1,6 @@
 
+*This is a work in progress and not suitable for production (or any other) use*
+
 # Django-Angular-Protect
 
 This is a Django app which helps protect against potential XSS issues when using

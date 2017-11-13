@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>Django Angular Protect</title>
+    <style>
+      html {
+        color: #393939;
+        font-family: sans-serif;
+      }
+
+      .done-true {
+        color: grey;
+        text-decoration: line-through;
+      }
+    </style>
+  </head>
+  <body ng-app="todoApp">
+    <h2>Todo</h2>
+    <div ng-controller="TodoListController as todoList">
+      <span>{{todoList.remaining()}} of {{todoList.todos.length}} remaining</span>
+      [
+      <a href="" ng-click="todoList.archive()">archive</a> ]
+      <ul class="unstyled">
+        <li ng-repeat="todo in todoList.todos">
+          <label class="checkbox">
+            <input type="checkbox" ng-model="todo.done">
+            <span class="done-{{todo.done}}">{{todo.text}}</span>
+          </label>
+        </li>
+      </ul>
+      <form ng-submit="todoList.addTodo()">
+        <input type="text" ng-model="todoList.todoText" size="30" placeholder="add new todo here">
+        <input class="btn-primary" type="submit" value="add">
+      </form>
+    </div>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.6/angular.min.js"></script>
+
+    <script>
+      const INITIAL_DATA = {
+        todos: [
+          { text: 'learn AngularJS', done: true },
+          { text: 'build an AngularJS app', done: false },
+          { text: 'test protection against vulnerabilities', done: false }
+        ]
+      };
+    </script>
+
+    <script>
+      angular.module('todoApp', [])
+        .controller('TodoListController', function () {
+          var todoList = this;
+          todoList.todos = Array.from(INITIAL_DATA.todos);
+
+          todoList.addTodo = function () {
+            todoList.todos.push({ text: todoList.todoText, done: false });
+            todoList.todoText = '';
+          };
+
+          todoList.remaining = function () {
+            var count = 0;
+            angular.forEach(todoList.todos, function (todo) {
+              count += todo.done ? 0 : 1;
+            });
+            return count;
+          };
+
+          todoList.archive = function () {
+            var oldTodos = todoList.todos;
+            todoList.todos = [];
+            angular.forEach(oldTodos, function (todo) {
+              if (!todo.done) todoList.todos.push(todo);
+            });
+          };
+        });
+    </script>
+  </body>
+</html>

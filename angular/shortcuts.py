@@ -1,3 +1,8 @@
+from __future__ import unicode_literals
+
+import threading
+
+from django.core.exceptions import SuspiciousOperation
 from django.shortcuts import render as django_render
 
 
@@ -11,42 +16,30 @@ class AngularContextValue(object):
         self._original = original
 
     def __getattr__(self, name):
-        return AngularContextValue(getattr(self._original, name))
+        value = getattr(self._original, name)
+        if _local.ng_protected:
+            return AngularContextValue(value)
+        return value
 
     def __getitem__(self, name):
-        return AngularContextValue(self._original[name])
+        value = self._original[name]
+        if _local.ng_protected:
+            return AngularContextValue(value)
+        return value
+
+    def __str__(self):
+        if _local.ng_protected:
+            raise SuspiciousOperation("Attempted to access Django context in protected area")
+        else:
+            return str(self._original)
 
     def __unicode__(self):
-        return u""
-
-
-class AngularSafeContext(dict): # Annoyingly has to subclass dict because Django checks
-    """
-        A wrapper around a Django context which by default
-        performs no substitutions (or rather replaces all substitutions with
-        an empty string).
-
-        Access to the context is only granted in the following cases:
-
-        1. You are in a {% djangoblock %} tag
-        2. You are using the |mark_ng_safe filter
-    """
-    is_angular_template = True
-
-    def __init__(self, original):
-        # This is set to False by {% django_block %}, and set back to true by
-        # {% enddjango_block %}
-        self._protected = True
-
-        # Make the original as inaccessible as possible
-        self.__original = original
-
-    def __getitem__(self, key):
-        if self._protected:
-            return AngularContextValue(self.__original[key])
+        if _local.ng_protected:
+            raise SuspiciousOperation("Attempted to access Django context in protected area")
         else:
-            return self._original[key]
+            return unicode(self._original)
 
+_local = threading.local()
 
 def render(request, template_name, context=None, **kwargs):
     """
@@ -56,12 +49,27 @@ def render(request, template_name, context=None, **kwargs):
         will ensure ng-non-bindable has been applied).
     """
 
-    response = django_render(
-        request,
-        template_name,
-        AngularSafeContext(context),
-        **kwargs
-    )
+    context = context.copy() or {}
+
+    def make_safe(ctx):
+        for k in ctx:
+            ctx[k] = AngularContextValue(ctx[k])
+        return ctx
+
+    context = make_safe(context)
+    context["is_angular_template"] = True
+
+    try:
+        _local.ng_protected = True
+
+        response = django_render(
+            request,
+            template_name,
+            context,
+            **kwargs
+        )
+    finally:
+        delattr(_local, "ng_protected")
 
     response._ng_safe = True
     return response

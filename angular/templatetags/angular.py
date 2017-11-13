@@ -4,6 +4,7 @@ from django.conf import settings
 from django import template
 from django.core.exceptions import ImproperlyConfigured
 
+from angular.shortcuts import _local
 
 register = template.Library()
 
@@ -19,13 +20,15 @@ class DjangoBlockNode(template.Node):
         self.nodelist = nodelist
 
     def render(self, context):
+        assert(hasattr(_local, "ng_protected"))
+
         try:
-            context._protected = False
+            _local.ng_protected = False
             return u"<div ng-non-bindable>{}</div>".format(
                 self.nodelist.render(context)
             )
         finally:
-            context._protected = True
+            _local.ng_protected = True
 
 
 @register.tag(name='djangoblock')
@@ -50,6 +53,9 @@ def ng_mark_safe(value):
 
         It is recommended you do regular audits of mark_ng_safe usage!
     """
+    if value is None:
+        return None
+
     return value._original
 
 
@@ -75,5 +81,10 @@ def ng_escape(value):
 
     # Escape closing tags by inserting a slash after the first character
     replacement = "/".join([ng_closing_tag[0], ng_closing_tag[1:]])
-    return six.text_type(value._original).replace(ng_closing_tag, replacement)
+
+    value = ng_mark_safe(value)
+    if value is None:
+        return value
+
+    return six.text_type(value).replace(ng_closing_tag, replacement)
 

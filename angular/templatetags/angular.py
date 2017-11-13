@@ -63,8 +63,8 @@ def ng_mark_safe(value):
 def ng_escape(value):
     """
         This has the same effect as mark_ng_safe however all instances of
-        {{, }}, [[ and ]] will be replaced by full-width unicode versions. This
-        prevents Angular treating them as things to be expanded.
+        of the closing tag (e.g. ]]) will have a backslash inserted after the
+        first character to force Angular to ignore it.
 
         WARNING! THIS COULD EXPOSE YOU TO XSS ATTACKS IF YOU USE IT TO PUT USER
         ENTERED DATA INTO A TEMPLATE. YOU HAVE BEEN WARNED!

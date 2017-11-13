@@ -15,8 +15,23 @@ class DjangoBlockNode(template.Node):
 
         1. Wraps content in <div ng-non-bindable>
         2. Temporarily allows access to the context within the block
+
+        Usage:
+
+        ```
+        {% djangoblock %}
+            {{django_var}}
+        {% enddjangoblock %}
+
+        Optionally...
+
+        {% djangoblock span %} {# Uses a span rather than a div #}
+            {{django_var}}
+        {% enddjangoblock %}
+        ```
     """
-    def __init__(self, nodelist):
+    def __init__(self, tag_element, nodelist):
+        self.tag_element = tag_element
         self.nodelist = nodelist
 
     def render(self, context):
@@ -24,8 +39,9 @@ class DjangoBlockNode(template.Node):
 
         try:
             _local.ng_protected = False
-            return u"<div ng-non-bindable>{}</div>".format(
-                self.nodelist.render(context)
+            return u"<{tag} ng-non-bindable>{content}</{tag}>".format(
+                tag=self.tag_element,
+                content=self.nodelist.render(context)
             )
         finally:
             _local.ng_protected = True
@@ -33,9 +49,14 @@ class DjangoBlockNode(template.Node):
 
 @register.tag(name='djangoblock')
 def do_django_block(parser, token):
+    try:
+        _, tag_element = token.split_contents()
+    except ValueError:
+        tag_element = 'div'
+
     nodelist = parser.parse(('enddjangoblock',))
     parser.delete_first_token()
-    return DjangoBlockNode(nodelist)
+    return DjangoBlockNode(tag_element, nodelist)
 
 
 @register.filter

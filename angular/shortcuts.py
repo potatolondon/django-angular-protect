@@ -2,10 +2,13 @@ from __future__ import unicode_literals
 
 import threading
 
+from django.utils.encoding import python_2_unicode_compatible
+from django.conf import settings
 from django.core.exceptions import SuspiciousOperation
 from django.shortcuts import render as django_render
 
 
+@python_2_unicode_compatible
 class AngularContextValue(object):
     """
         Wraps a value from the Django context, but evalutes
@@ -29,15 +32,13 @@ class AngularContextValue(object):
 
     def __str__(self):
         if _local.ng_protected:
-            raise SuspiciousOperation("Attempted to access Django context in protected area")
+            if settings.DEBUG:
+                raise SuspiciousOperation("Attempted to access Django context in protected area")
+            else:
+                return ""
         else:
             return str(self._original)
 
-    def __unicode__(self):
-        if _local.ng_protected:
-            raise SuspiciousOperation("Attempted to access Django context in protected area")
-        else:
-            return unicode(self._original)
 
 _local = threading.local()
 

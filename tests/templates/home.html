@@ -1,3 +1,5 @@
+{% load angular %}
+
 <!DOCTYPE html>
 <html>
   <head>
@@ -18,14 +20,14 @@
   <body ng-app="todoApp">
     <h2>Todo</h2>
     <div ng-controller="TodoListController as todoList">
-      <span>{{todoList.remaining()}} of {{todoList.todos.length}} remaining</span>
+      <span>[[todoList.remaining()]] of [[todoList.todos.length]] remaining</span>
       [
       <a href="" ng-click="todoList.archive()">archive</a> ]
       <ul class="unstyled">
         <li ng-repeat="todo in todoList.todos">
           <label class="checkbox">
             <input type="checkbox" ng-model="todo.done">
-            <span class="done-{{todo.done}}">{{todo.text}}</span>
+            <span class="done-[[todo.done]]">[[todo.text]]</span>
           </label>
         </li>
       </ul>
@@ -40,9 +42,9 @@
     <script>
       const INITIAL_DATA = {
         todos: [
-          { text: 'learn AngularJS', done: true },
-          { text: 'build an AngularJS app', done: false },
-          { text: 'test protection against vulnerabilities', done: false }
+        {% for todo in todos %}
+          { text: {{todo.text|ng_escape}}, done: {{todo.text|ng_mark_safe}} },
+        {% endfor %}
         ]
       };
     </script>

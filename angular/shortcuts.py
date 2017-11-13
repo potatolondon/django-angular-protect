@@ -20,7 +20,7 @@ class AngularContextValue(object):
         return u""
 
 
-class AngularSafeContext(object):
+class AngularSafeContext(dict): # Annoyingly has to subclass dict because Django checks
     """
         A wrapper around a Django context which by default
         performs no substitutions (or rather replaces all substitutions with
@@ -59,7 +59,7 @@ def render(request, template_name, context=None, **kwargs):
     response = django_render(
         request,
         template_name,
-        AngularSafeContext(context)
+        AngularSafeContext(context),
         **kwargs
     )
 

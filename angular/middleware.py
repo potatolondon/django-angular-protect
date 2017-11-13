@@ -1,3 +1,5 @@
+from __future__ import unicode_literals
+
 from django.conf import settings
 from django.core.exceptions import SuspiciousOperation
 
@@ -8,7 +10,6 @@ _NG_SAFE_ATTRIBUTE = "_ng_safe"
 
 class EnsureAngularProtectionMiddleware(object):
     """
-
         If settings.DEBUG is True, this middleware detects whether returned HTML content
         contains the ng-app directive.
 
@@ -18,12 +19,13 @@ class EnsureAngularProtectionMiddleware(object):
         This exists to prevent accidental bypass of the protection that `render()` provides.
     """
 
-    def process_response(request, response):
+    def process_response(self, request, response):
         if not settings.DEBUG:
             return response
 
         def check_content(content):
-            if content.find(_NG_APP_MARKER) != -1:
+            # Content is raw bytes, not unicode
+            if _NG_APP_MARKER.encode() in content:
                 if not getattr(response, _NG_SAFE_ATTRIBUTE, False):
                     raise SuspiciousOperation(
                         "Angular template not rendered with angular.shorcuts.render"

@@ -1,4 +1,9 @@
+import six
+
+from django.conf import settings
 from django import template
+from django.core.exceptions import ImproperlyConfigured
+
 
 register = template.Library()
 
@@ -23,16 +28,15 @@ class DjangoBlockNode(template.Node):
             context._protected = True
 
 
+@register.tag(name='djangoblock')
 def do_django_block(parser, token):
     nodelist = parser.parse(('enddjangoblock',))
     parser.delete_first_token()
     return DjangoBlockNode(nodelist)
 
-@register.tag('djangoblock', do_django_block)
-
 
 @register.filter
-def mark_ng_safe(value):
+def ng_mark_safe(value):
     """
         This will allow access to a value retrieved from an AngularSafeContext
         instance.
@@ -41,11 +45,34 @@ def mark_ng_safe(value):
 
             {{my_var|mark_ng_safe}}
 
-        WARNING: THIS COULD EXPOSE YOU TO XSS ATTACKS IF YOU USE IT TO PUT USER
+        WARNING! THIS COULD EXPOSE YOU TO XSS ATTACKS IF YOU USE IT TO PUT USER
         ENTERED DATA INTO A TEMPLATE. YOU HAVE BEEN WARNED!
 
         It is recommended you do regular audits of mark_ng_safe usage!
     """
     return value._original
 
+
+@register.filter
+def ng_escape(value):
+    """
+        This has the same effect as mark_ng_safe however all instances of
+        {{, }}, [[ and ]] will be replaced by full-width unicode versions. This
+        prevents Angular treating them as things to be expanded.
+
+        WARNING! THIS COULD EXPOSE YOU TO XSS ATTACKS IF YOU USE IT TO PUT USER
+        ENTERED DATA INTO A TEMPLATE. YOU HAVE BEEN WARNED!
+
+        SPECIFICALLY THIS WILL NOT PROTECT YOU IF YOU USE IN ANGULAR DIRECTIVES LIKE
+        NG-IF, NG-REPEAT ETC.!
+    """
+
+    # Intentionally no default, we want people to do this explicitly
+    try:
+        ng_closing_tag = getattr(settings, "NG_CLOSING_TAG")
+    except AttributeError:
+        raise ImproperlyConfigured("You must set settings.NG_CLOSING_TAG (e.g. ']]')")
+
+    replacement = "/".join([ng_closing_tag[0], ng_closing_tag[1:]])
+    return six.text_type(value._original).replace(ng_closing_tag, replacement)
 

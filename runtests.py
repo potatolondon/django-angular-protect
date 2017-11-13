@@ -19,7 +19,7 @@ import django
 from django.conf import settings
 
 settings.configure(
-    DEBUG = True,
+    DEBUG = False,
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.sqlite3',
@@ -30,9 +30,19 @@ settings.configure(
         'django.contrib.auth',
         'django.contrib.contenttypes',
         'django.contrib.sessions',
-        'django.contrib.admin',
         'angular',
-    )
+    ),
+    NG_CLOSING_TAG = ']]',
+    TEMPLATES = [{
+        'BACKEND': 'django.template.backends.django.DjangoTemplates',
+        'DIRS': (os.path.join(this_dir, "tests/templates"),),
+        'OPTIONS': {
+            'loaders': [
+                'django.template.loaders.app_directories.Loader',
+                'django.template.loaders.filesystem.Loader',
+            ]
+        },
+    }]
 )
 
 django.setup()

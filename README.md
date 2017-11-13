@@ -49,11 +49,11 @@ access to the Django context.
 There are occasions though where you need to use data from the Django context which are "safe"
 (as in they are not sourced from user input), and you need them for an Angular directive.
 
-In that situation, you can use the `mark_ng_safe` template filter while outside a
+In that situation, you can use the `ng_mark_safe` template filter while outside a
 `{% djangoblock %}`:
 
 ```html
-<div ng-if="{{safe_var|mark_ng_safe}}">
+<div ng-if="{{safe_var|ng_mark_safe}}">
 ```
 
 Which would output the value of `safe_var`, of course, you must ensure the variable

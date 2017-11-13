@@ -73,6 +73,7 @@ def ng_escape(value):
     except AttributeError:
         raise ImproperlyConfigured("You must set settings.NG_CLOSING_TAG (e.g. ']]')")
 
+    # Escape closing tags by inserting a slash after the first character
     replacement = "/".join([ng_closing_tag[0], ng_closing_tag[1:]])
     return six.text_type(value._original).replace(ng_closing_tag, replacement)
 

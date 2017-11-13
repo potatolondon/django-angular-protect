@@ -58,3 +58,13 @@ In that situation, you can use the `ng_mark_safe` template filter while outside 
 
 Which would output the value of `safe_var`, of course, you must ensure the variable
 does not contain data which could potentially be malicious. 
+
+## Configuration
+
+ - Add the `'angular'` app to your `INSTALLED_APPS` setting.
+ - Add `'angular.middleware.EnsureAngularProtectionMiddleware'` to your `MIDDLEWARE_CLASSES`
+   setting.
+ - Set `settings.NG_CLOSING_TAG` setting. This has no default as it's essential that it is
+   set to match your `$interpolateProvider.startSymbol('[[').endSymbol(']]');` setting.
+
+

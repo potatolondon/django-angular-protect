@@ -68,7 +68,7 @@ Angular expanding them.
  - Add the `'angular'` app to your `INSTALLED_APPS` setting.
  - Add `'angular.middleware.EnsureAngularProtectionMiddleware'` to your `MIDDLEWARE_CLASSES`
    setting.
- - Set `settings.NG_CLOSING_TAG` setting. This has no default as it's essential that it is
+ - Set `settings.NG_CLOSING_TAG` and `settings.NG_OPENING_TAG` setting. This has no default as it's essential that it is
    set to match your `$interpolateProvider.startSymbol('[[').endSymbol(']]');` setting.
 
 ## USE WITH CAUTION!

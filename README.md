@@ -18,7 +18,7 @@ For example this template:
 <span>{{user.first_name}}</span>
 ```
 
-Would output the following when using `ng_render()`
+Would output the following when using `angular.shortcuts.render()`
 
 ```html
 <span></span>
@@ -53,11 +53,15 @@ In that situation, you can use the `ng_mark_safe` template filter while outside 
 `{% djangoblock %}`:
 
 ```html
-<div ng-if="{{safe_var|ng_mark_safe}}">
+<div data-my-attribute="{{safe_var|ng_mark_safe}}">
 ```
 
 Which would output the value of `safe_var`, of course, you must ensure the variable
-does not contain data which could potentially be malicious. 
+does not contain data which could potentially be malicious.
+
+`ng_escape` is does the same thing as `ng_mark_safe` except it will disrupt any Angular
+closing tags by inserting a slash in them. (e.g. `]]` would become `]/]`) which prevents
+Angular expanding them.
 
 ## Configuration
 
@@ -67,4 +71,12 @@ does not contain data which could potentially be malicious.
  - Set `settings.NG_CLOSING_TAG` setting. This has no default as it's essential that it is
    set to match your `$interpolateProvider.startSymbol('[[').endSymbol(']]');` setting.
 
+## USE WITH CAUTION!
 
+Using `ng_escape` and `ng_mark_safe` with user submitted data can expose you to XSS attacks!
+
+In particular, you should *not* use them inside Angular directives (such as `ng-if`) or HTML tag
+attributes unless you are certain the variable does not contain any data coming from a user.
+
+`ng_escape` will not protect you at all inside HTML attributes as all it does is escape the `endSymbol`
+and malicious Javascript will not need those (e.g. `ng-if="{{user_var|ng_escape}}"` could evaulate to `ng-if="alert(0)"`).

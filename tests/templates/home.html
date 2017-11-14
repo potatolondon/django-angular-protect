@@ -43,7 +43,7 @@
       const INITIAL_DATA = {
         todos: [
         {% for todo in todos %}
-          { text: {{todo.text|ng_escape}}, done: {{todo.text|ng_mark_safe}} },
+          { text: {{todo.text|ng_mark_safe}}, done: {{todo.text|ng_mark_safe}} },
         {% endfor %}
         ]
       };

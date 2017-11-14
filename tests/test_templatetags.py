@@ -32,7 +32,7 @@ class DjangoBlockTests(TestCase):
         ctx = {
             "thing": "ROOT_THING",
             "nested": {
-                "list": ["LIST_ONE"],
+                "list": ["LIST_ONE", "[[LIST_TWO]]"],
                 "thing": "NESTED_THING"
             }
         }
@@ -42,4 +42,5 @@ class DjangoBlockTests(TestCase):
         self.assertTrue("ROOT_THING" in content, content)
         self.assertTrue("LIST_ONE" in content)
         self.assertTrue("NESTED_THING" in content)
+        self.assertTrue("[[LIST_TWO]/]" in content)
 

@@ -29,6 +29,9 @@ class AngularContextValue(object):
     def __init__(self, original):
         self._original = original
 
+    def __len__(self):
+        return len(self._original)
+
     def __getattr__(self, name):
         value = getattr(self._original, name)
         if _is_safe_type(value):

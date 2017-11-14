@@ -14,5 +14,9 @@
             {# This is for the SuspiciousOperation test #}
             {{thing}}
         {% endif %}
+
+        {% for thing in nested.list %}
+            {{thing|ng_escape}}
+        {% endfor %}
     </body>
 </html>

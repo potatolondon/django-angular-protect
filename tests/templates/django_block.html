@@ -1,0 +1,18 @@
+{% load angular %}
+
+<html ng-app>
+    <body>
+        {% djangoblock %}
+            {{thing}}
+            {{nested.thing}}
+            {{nested.list.0}}
+        {% enddjangoblock %}
+
+        {% djangoblock span %}{% enddjangoblock %}
+
+        {% if test_non_accessible|ng_mark_safe %}
+            {# This is for the SuspiciousOperation test #}
+            {{thing}}
+        {% endif %}
+    </body>
+</html>

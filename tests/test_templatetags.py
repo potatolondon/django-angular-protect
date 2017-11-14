@@ -42,5 +42,5 @@ class DjangoBlockTests(TestCase):
         self.assertTrue("ROOT_THING" in content, content)
         self.assertTrue("LIST_ONE" in content)
         self.assertTrue("NESTED_THING" in content)
-        self.assertTrue("[[LIST_TWO]/]" in content)
+        self.assertTrue("[/[LIST_TWO]/]" in content)
 

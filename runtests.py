@@ -32,6 +32,7 @@ settings.configure(
         'django.contrib.sessions',
         'angular',
     ),
+    NG_OPENING_TAG = '[[',
     NG_CLOSING_TAG = ']]',
     TEMPLATES = [{
         'BACKEND': 'django.template.backends.django.DjangoTemplates',

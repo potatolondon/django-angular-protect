@@ -15,7 +15,7 @@ def _is_safe_type(value):
     """
     return (
         isinstance(value, six.integer_types) or
-        isinstance(value, bool)
+        isinstance(value, bool) or value is None
     )
 
 

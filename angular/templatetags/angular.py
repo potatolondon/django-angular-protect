@@ -100,15 +100,36 @@ def ng_escape(value):
     # Intentionally no default, we want people to do this explicitly
     try:
         ng_closing_tag = getattr(settings, "NG_CLOSING_TAG")
+
+        if len(ng_closing_tag) <= 1:
+            raise ImproperlyConfigured("NG_CLOSING_TAG should have at least 2 characters")
+
     except AttributeError:
         raise ImproperlyConfigured("You must set settings.NG_CLOSING_TAG (e.g. ']]')")
 
-    # Escape closing tags by inserting a slash after the first character
-    replacement = "/".join([ng_closing_tag[0], ng_closing_tag[1:]])
+    try:
+        ng_opening_tag = getattr(settings, "NG_OPENING_TAG")
+
+        if len(ng_opening_tag) <= 1:
+            raise ImproperlyConfigured("NG_OPENING_TAG should have at least 2 characters")
+
+    except AttributeError:
+        raise ImproperlyConfigured("You must set settings.NG_OPENING_TAG (e.g. '[[')")
 
     value = ng_mark_safe(value)
+
     if value is None:
         return value
 
-    return six.text_type(value).replace(ng_closing_tag, replacement)
+    if _is_safe_type(value):
+        return value
+
+    value = six.text_type(value)
+
+    for tag in (ng_opening_tag, ng_closing_tag):
+        # Escape opening/closing tags by inserting a slash after the first character
+        replacement = "/".join([tag[0], tag[1:]])
+        value = value.replace(tag, replacement)
+
+    return value
 

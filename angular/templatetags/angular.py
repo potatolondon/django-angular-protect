@@ -4,7 +4,7 @@ from django.conf import settings
 from django import template
 from django.core.exceptions import ImproperlyConfigured
 
-from angular.shortcuts import _local
+from angular.shortcuts import _local, _is_safe_type
 
 register = template.Library()
 
@@ -76,6 +76,9 @@ def ng_mark_safe(value):
     """
     if value is None:
         return None
+
+    if _is_safe_type(value):
+        return value
 
     return value._original
 

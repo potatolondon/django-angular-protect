@@ -1,11 +1,22 @@
 from __future__ import unicode_literals
 
+import six
 import threading
 
 from django.utils.encoding import python_2_unicode_compatible
 from django.conf import settings
 from django.core.exceptions import SuspiciousOperation
 from django.shortcuts import render as django_render
+
+
+def _is_safe_type(value):
+    """
+        These are types which aren't exploitable
+    """
+    return (
+        isinstance(value, six.integer_types) or
+        isinstance(value, bool)
+    )
 
 
 @python_2_unicode_compatible
@@ -20,12 +31,23 @@ class AngularContextValue(object):
 
     def __getattr__(self, name):
         value = getattr(self._original, name)
+        if _is_safe_type(value):
+            return value
+
         if _local.ng_protected:
             return AngularContextValue(value)
         return value
 
+    def __iter__(self):
+        for x in self._original:
+            yield AngularContextValue(x)
+
     def __getitem__(self, name):
         value = self._original[name]
+
+        if _is_safe_type(value):
+            return value
+
         if _local.ng_protected:
             return AngularContextValue(value)
         return value
@@ -37,7 +59,7 @@ class AngularContextValue(object):
             else:
                 return ""
         else:
-            return str(self._original)
+            return six.text_type(self._original)
 
 
 _local = threading.local()
@@ -54,7 +76,8 @@ def render(request, template_name, context=None, **kwargs):
 
     def make_safe(ctx):
         for k in ctx:
-            ctx[k] = AngularContextValue(ctx[k])
+            if not _is_safe_type(ctx[k]):
+                ctx[k] = AngularContextValue(ctx[k])
         return ctx
 
     context = make_safe(context)

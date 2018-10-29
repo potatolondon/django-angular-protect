@@ -4,7 +4,7 @@ from django.conf import settings
 from django import template
 from django.core.exceptions import ImproperlyConfigured
 
-from angular.shortcuts import _local, _is_safe_type
+from ..shortcuts import _local, _is_safe_type
 
 register = template.Library()
 

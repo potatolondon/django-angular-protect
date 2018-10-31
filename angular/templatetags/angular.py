@@ -1,10 +1,11 @@
-import six
+from __future__ import absolute_import
 
+import six
 from django.conf import settings
 from django import template
 from django.core.exceptions import ImproperlyConfigured
 
-from ..shortcuts import _local, _is_safe_type
+from angular.shortcuts import _local, _is_safe_type
 
 register = template.Library()
 

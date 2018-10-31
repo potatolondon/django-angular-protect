@@ -70,6 +70,7 @@ Angular expanding them.
    setting.
  - Set `settings.NG_CLOSING_TAG` and `settings.NG_OPENING_TAG` setting. This has no default as it's essential that it is
    set to match your `$interpolateProvider.startSymbol('[[').endSymbol(']]');` setting.
+ - Set `settings.NG_APP_MARKER` if you don't use `ng-app` to bootstrap your angular application (you use the programmatic bootstrap). The same string need to be added as an attribute to the body element.
 
 ## USE WITH CAUTION!
 

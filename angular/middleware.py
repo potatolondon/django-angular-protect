@@ -4,7 +4,7 @@ from django.conf import settings
 from django.core.exceptions import SuspiciousOperation
 
 
-_NG_APP_MARKER = "ng-app"
+_NG_APP_MARKER = getattr(settings, "NG_APP_MARKER", "ng-app")
 _NG_SAFE_ATTRIBUTE = "_ng_safe"
 
 
@@ -20,7 +20,7 @@ class EnsureAngularProtectionMiddleware(object):
     """
 
     def process_response(self, request, response):
-        if not settings.DEBUG:
+        if not settings.DEBUG or 'text/html' not in response.get('Content-Type', ''):
             return response
 
         def check_content(content):
@@ -28,7 +28,8 @@ class EnsureAngularProtectionMiddleware(object):
             if _NG_APP_MARKER.encode() in content:
                 if not getattr(response, _NG_SAFE_ATTRIBUTE, False):
                     raise SuspiciousOperation(
-                        "Angular template not rendered with angular.shorcuts.render"
+                        ("Angular template not rendered with angular.shorcuts.render or "
+                         "attempt to access Django context in protected area.")
                     )
             return content
 

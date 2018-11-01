@@ -1,5 +1,6 @@
-import six
+from __future__ import absolute_import
 
+import six
 from django.conf import settings
 from django import template
 from django.core.exceptions import ImproperlyConfigured

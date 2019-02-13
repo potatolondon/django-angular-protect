@@ -23,6 +23,10 @@ class EnsureAngularProtectionMiddleware(object):
         if not settings.DEBUG or 'text/html' not in response.get('Content-Type', ''):
             return response
 
+        is_error_response = response.status_code == 500
+        if is_error_response and settings.DEBUG:
+            return response
+
         def check_content(content):
             # Content is raw bytes, not unicode
             if _NG_APP_MARKER.encode() in content:

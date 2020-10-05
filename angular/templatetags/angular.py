@@ -1,6 +1,5 @@
 from __future__ import absolute_import
 
-import six
 from django.conf import settings
 from django import template
 from django.core.exceptions import ImproperlyConfigured
@@ -125,7 +124,7 @@ def ng_escape(value):
     if _is_safe_type(value):
         return value
 
-    value = six.text_type(value)
+    value = str(value)
 
     for tag in (ng_opening_tag, ng_closing_tag):
         # Escape opening/closing tags by inserting a slash after the first character

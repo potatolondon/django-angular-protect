@@ -29,26 +29,21 @@ urlpatterns = [
 
 
 @override_settings(ROOT_URLCONF=__name__, DEBUG=True)
-@modify_settings(MIDDLEWARE_CLASSES={
+@modify_settings(MIDDLEWARE={
     'append': 'angular.middleware.EnsureAngularProtectionMiddleware'
 })
 class MiddlewareTests(TestCase):
     def test_middleware_flags_django_render(self):
+        response = self.client.get("/bad_view/")
+        self.assertEqual(response.status_code, 400)
 
-        with self.assertRaises(SuspiciousOperation):
-            self.client.get("/bad_view/")
-
-        try:
-            self.client.get("/good_view/")
-        except SuspiciousOperation:
-            self.fail("Good view incorrectly threw SuspiciousOperation")
+        response = self.client.get("/good_view/")
+        self.assertEqual(response.status_code, 200)
 
     def test_middleware_ignores_checking_erroring_views(self):
         # It's possible that the ng marker gets injected into the error page e.g.
         # because it's in the settings file.
         # If we have an error response we just ignore any checks.
         with override_settings(NG_APP_MARKER=NG_APP_MARKER):
-            try:
-                self.client.get("/errors_view/")
-            except SuspiciousOperation:
-                self.fail("Errors view incorrectly threw SuspiciousOperation")
+            response = self.client.get("/errors_view/")
+            self.assertEqual(response.status_code, 500)

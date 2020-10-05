@@ -1,14 +1,12 @@
-from __future__ import unicode_literals
-
 from django.conf import settings
 from django.core.exceptions import SuspiciousOperation
-
+from django.utils.deprecation import MiddlewareMixin
 
 _NG_APP_MARKER = getattr(settings, "NG_APP_MARKER", "ng-app")
 _NG_SAFE_ATTRIBUTE = "_ng_safe"
 
 
-class EnsureAngularProtectionMiddleware(object):
+class EnsureAngularProtectionMiddleware(MiddlewareMixin):
     """
         If settings.DEBUG is True, this middleware detects whether returned HTML content
         contains the ng-app directive.
@@ -32,7 +30,7 @@ class EnsureAngularProtectionMiddleware(object):
             if _NG_APP_MARKER.encode() in content:
                 if not getattr(response, _NG_SAFE_ATTRIBUTE, False):
                     raise SuspiciousOperation(
-                        ("Angular template not rendered with angular.shorcuts.render or "
+                        ("Angular template not rendered with angular.shortcuts.render or "
                          "attempt to access Django context in protected area.")
                     )
             return content

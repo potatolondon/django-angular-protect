@@ -1,6 +1,3 @@
-from __future__ import unicode_literals
-
-import six
 import threading
 
 from django.utils.encoding import python_2_unicode_compatible
@@ -14,12 +11,11 @@ def _is_safe_type(value):
         These are types which aren't exploitable
     """
     return (
-        isinstance(value, six.integer_types) or
+        isinstance(value, int) or
         isinstance(value, bool) or value is None
     )
 
 
-@python_2_unicode_compatible
 class AngularContextValue(object):
     """
         Wraps a value from the Django context, but evalutes
@@ -62,7 +58,7 @@ class AngularContextValue(object):
             else:
                 return ""
         else:
-            return six.text_type(self._original)
+            return str(self._original)
 
 
 _local = threading.local()

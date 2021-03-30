@@ -1,6 +1,5 @@
 import threading
 
-from django.utils.encoding import python_2_unicode_compatible
 from django.conf import settings
 from django.core.exceptions import SuspiciousOperation
 from django.shortcuts import render as django_render
